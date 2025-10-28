@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Management System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for Theming */
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+            --gray-color: #6b7280;
+            --light-color: #f3f4f6;
+            --dark-color: #1f2937;
+            --body-bg: #f9fafb;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --card-hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --border-radius: 0.5rem;
+            --transition: all 0.3s ease;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--body-bg);
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.75rem;
+            color: var(--dark-color);
+        }
+
+        h1 { font-size: 2.25rem; }
+        h2 { font-size: 1.875rem; }
+        h3 { font-size: 1.5rem; }
+        h4 { font-size: 1.25rem; }
+        h5 { font-size: 1.125rem; }
+        h6 { font-size: 1rem; }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        .text-center { text-align: center; }
+        .text-secondary { color: var(--secondary-color); }
+        .text-sm { font-size: 0.875rem; }
+        .mb-0 { margin-bottom: 0; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-3 { margin-bottom: 0.75rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-5 { margin-bottom: 1.25rem; }
+        .ms-2 { margin-left: 0.5rem; }
+        .me-2 { margin-right: 0.5rem; }
+
+        /* Navigation */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--secondary-color);
+            font-weight: 500;
+            padding: 0.25rem 0;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-link.active {
+            color: var(--primary-color);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6rem 0;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0 0 2rem 2rem;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .decoration-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 1;
+        }
+
+        .decoration-circle-1 {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -100px;
+        }
+
+        .decoration-circle-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            right: -50px;
+        }
+
+        /* Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-hover-shadow);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--secondary-color);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+        }
+
+        .card:hover {
+            box-shadow: var(--card-hover-shadow);
+        }
+
+        .card-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            background-color: rgba(0, 0, 0, 0.01);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .card-text {
+            margin-bottom: 0;
+        }
+
+        /* Tables */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .table th {
+            font-weight: 600;
+            color: var(--secondary-color);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .table tbody tr {
+            transition: var(--transition);
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(79, 70, 229, 0.05);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--dark-color);
+            background-color: white;
+            border: 1px solid #d1d5db;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-control.is-invalid {
+            border-color: var(--danger-color);
+        }
+
+        .invalid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
+            color: var(--danger-color);
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -0.75rem;
+        }
+
+        .form-col {
+            flex: 0 0 50%;
+            padding: 0 0.75rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.75rem 1.25rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            color: white;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            color: white;
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #475569;
+            border-color: #475569;
+        }
+
+        .btn-danger {
+            color: white;
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+            border-color: #dc2626;
+        }
+
+        .btn-light {
+            color: var(--dark-color);
+            background-color: white;
+            border-color: #e5e7eb;
+        }
+
+        .btn-light:hover {
+            background-color: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color);
+            background-color: transparent;
+            background-image: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn-outline-primary:hover {
+            color: white;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-outline-danger {
+            color: var(--danger-color);
+            background-color: transparent;
+            background-image: none;
+            border-color: var(--danger-color);
+        }
+
+        .btn-outline-danger:hover {
+            color: white;
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: calc(var(--border-radius) - 0.25rem);
+        }
+
+        .btn-lg {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            line-height: 1.5;
+            border-radius: calc(var(--border-radius) + 0.25rem);
+        }
+
+        .w-100 { width: 100%; }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 9999px;
+        }
+
+        .badge-danger {
+            color: white;
+            background-color: var(--danger-color);
+        }
+
+        .badge-warning {
+            color: white;
+            background-color: var(--warning-color);
+        }
+
+        .badge-success {
+            color: white;
+            background-color: var(--success-color);
+        }
+
+        .badge-gray {
+            color: white;
+            background-color: var(--gray-color);
+        }
+
+        .badge-secondary {
+            color: white;
+            background-color: var(--secondary-color);
+        }
+
+        /* Alerts */
+        .alert {
+            position: relative;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: var(--border-radius);
+        }
+
+        .alert-danger {
+            color: #7f1d1d;
+            background-color: #fee2e2;
+            border-color: #fecaca;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-hover-shadow);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+            max-width: 350px;
+            backdrop-filter: blur(10px);
+        }
+
+        .toast-success {
+            background-color: rgba(16, 185, 129, 0.9);
+            color: white;
+        }
+
+        .toast-error {
+            background-color: rgba(239, 68, 68, 0.9);
+            color: white;
+        }
+
+        .toast-warning {
+            background-color: rgba(245, 158, 11, 0.9);
+            color: white;
+        }
+
+        .toast-body {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            margin-left: 10px;
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .toast-close:hover {
+            opacity: 1;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 3rem 0 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .footer-section p {
+            color: #d1d5db;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            color: #d1d5db;
+            transition: var(--transition);
+        }
+
+        .footer-section ul li a:hover {
+            color: white;
+            text-decoration: none;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #9ca3af;
+        }
+
+        /* Utility Classes */
+        .d-flex {
+            display: flex;
+        }
+
+        .justify-content-between {
+            justify-content: space-between;
+        }
+
+        .justify-content-center {
+            justify-content: center;
+        }
+
+        .align-items-center {
+            align-items: center;
+        }
+
+        .align-items-start {
+            align-items: flex-start;
+        }
+
+        .gap-2 {
+            gap: 0.5rem;
+        }
+
+        .gap-3 {
+            gap: 0.75rem;
+        }
+
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Page content */
+        .page-content {
+            padding: 2rem 0;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .form-col {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+            
+            .d-flex {
+                flex-direction: column;
+            }
+            
+            .gap-3 {
+                gap: 1rem;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .navbar-nav {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .hero {
+                padding: 4rem 0;
+            }
+            
+            h1 { font-size: 1.875rem; }
+            h2 { font-size: 1.5rem; }
+            h3 { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Toast Container -->
+        <div id="toast-container"></div>
+        
+        <!-- Navigation -->
+        <nav class="navbar" id="navbar" style="display: none;">
+            <div class="container">
+                <div class="navbar-brand">Ticket Management</div>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" id="nav-dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" id="nav-tickets">Tickets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="btn btn-danger btn-sm" id="nav-logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        
+        <!-- Page Content -->
+        <div class="container page-content">
+            <div id="page-content">
+                <div class="spinner"></div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="footer" id="footer" style="display: none;">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>Ticket Management System</h3>
+                        <p>A powerful solution for tracking and managing tickets efficiently.</p>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h3>Quick Links</h3>
+                        <ul>
+                            <li><a href="#" id="footer-home">Home</a></li>
+                            <li><a href="#" id="footer-login">Login</a></li>
+                            <li><a href="#" id="footer-signup">Sign Up</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h3>Implementations</h3>
+                        <ul>
+                            <li><a href="#">React</a></li>
+                            <li><a href="#">Vue.js</a></li>
+                            <li><a href="#">Twig</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom">
+                    <p>&copy; 2023 Ticket Management System. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Application State
+        const app = {
+            user: null,
+            currentPage: 'home',
+            tickets: [],
+            stats: {},
+            currentTicket: null
+        };
+
+        // API Base URL
+        const API_BASE = '/api';
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Check authentication status
+            checkAuthStatus();
+            
+            // Load the initial page
+            navigateTo(window.location.hash ? window.location.hash.substring(1) : 'home');
+        });
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Navigation
+            document.getElementById('nav-dashboard').addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo('dashboard');
+            });
+
+            document.getElementById('nav-tickets').addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo('tickets');
+            });
+
+            document.getElementById('nav-logout').addEventListener('click', (e) => {
+                e.preventDefault();
+                logout();
+            });
+
+            // Footer links
+            document.getElementById('footer-home').addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo('home');
+            });
+
+            document.getElementById('footer-login').addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo('login');
+            });
+
+            document.getElementById('footer-signup').addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo('signup');
+            });
+
+            // Hash change for browser navigation
+            window.addEventListener('hashchange', () => {
+                const hash = window.location.hash.substring(1);
+                navigateTo(hash);
+            });
+        }
+
+        // Check authentication status
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/check`);
+                const data = await response.json();
+                
+                if (data.authenticated) {
+                    app.user = data.user;
+                    showNavbar();
+                    hideFooter();
+                } else {
+                    app.user = null;
+                    hideNavbar();
+                    showFooter();
+                }
+            } catch (error) {
+                console.error('Error checking auth status:', error);
+                showToast('Error checking authentication status', 'error');
+            }
+        }
+
+        // Navigation
+        async function navigateTo(page) {
+            app.currentPage = page;
+            
+            // Update URL hash
+            window.location.hash = page;
+            
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Load page content
+            const pageContent = document.getElementById('page-content');
+            pageContent.innerHTML = '<div class="spinner"></div>';
+            
+            switch (page) {
+                case 'home':
+                    loadHomePage();
+                    break;
+                case 'login':
+                    loadLoginPage();
+                    break;
+                case 'signup':
+                    loadSignupPage();
+                    break;
+                case 'dashboard':
+                    if (!app.user) {
+                        navigateTo('login');
+                        return;
+                    }
+                    document.getElementById('nav-dashboard').classList.add('active');
+                    loadDashboardPage();
+                    break;
+                case 'tickets':
+                    if (!app.user) {
+                        navigateTo('login');
+                        return;
+                    }
+                    document.getElementById('nav-tickets').classList.add('active');
+                    loadTicketsPage();
+                    break;
+                case 'ticket-detail':
+                    if (!app.user) {
+                        navigateTo('login');
+                        return;
+                    }
+                    document.getElementById('nav-tickets').classList.add('active');
+                    loadTicketDetailPage();
+                    break;
+                case 'create-ticket':
+                    if (!app.user) {
+                        navigateTo('login');
+                        return;
+                    }
+                    document.getElementById('nav-tickets').classList.add('active');
+                    loadCreateTicketPage();
+                    break;
+                case 'edit-ticket':
+                    if (!app.user) {
+                        navigateTo('login');
+                        return;
+                    }
+                    document.getElementById('nav-tickets').classList.add('active');
+                    loadEditTicketPage();
+                    break;
+                default:
+                    loadHomePage();
+            }
+        }
+
+        // Load Home Page
+        function loadHomePage() {
+            const pageContent = document.getElementById('page-content');
+            pageContent.innerHTML = `
+                <section class="hero">
+                    <div class="decoration-circle decoration-circle-1"></div>
+                    <div class="decoration-circle decoration-circle-2"></div>
+                    <div class="hero-content">
+                        <h1>Ticket Management System</h1>
+                        <p class="mb-5">Streamline your support workflow with our powerful ticket management solution</p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="#" class="btn btn-light btn-lg" id="home-login-btn">Login</a>
+                            <a href="#" class="btn btn-primary btn-lg" id="home-signup-btn">Sign Up</a>
+                        </div>
+                    </div>
+                </section>
+                
+                <div class="container mt-5">
+                    <div class="text-center mb-5">
+                        <h2>Key Features</h2>
+                        <p class="text-secondary">Everything you need to manage customer support tickets efficiently</p>
+                    </div>
+                    
+                    <div class="stats-container">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Ticket Tracking</h3>
+                                <p class="card-text">Create, track, and manage tickets with ease</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Dashboard Analytics</h3>
+                                <p class="card-text">Get insights into your support performance</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">User Management</h3>
+                                <p class="card-text">Manage user access and permissions</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('home-login-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo('login');
+            });
+            
+            document.getElementById('home-signup-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo('signup');
+            });
+        }
+
+        // Load Login Page
+        function loadLoginPage() {
+            const pageContent = document.getElementById('page-content');
+            pageContent.innerHTML = `
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="text-center">Login</h2>
+                            </div>
+                            <div class="card-body">
+                                <form id="login-form">
+                                    <div class="form-group">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="password" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="password" name="password" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="#" id="login-to-signup">Don't have an account? Sign up</a>
+                                        <button type="submit" class="btn btn-primary">Login</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            document.getElementById('login-to-signup').addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo('signup');
+            });
+        }
+
+        // Load Signup Page
+        function loadSignupPage() {
+            const pageContent = document.getElementById('page-content');
+            pageContent.innerHTML = `
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="text-center">Sign Up</h2>
+                            </div>
+                            <div class="card-body">
+                                <form id="signup-form">
+                                    <div class="form-group">
+                                        <label for="name" class="form-label">Name</label>
+                                        <input type="text" class="form-control" id="name" name="name" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="password" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="password" name="password" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="#" id="signup-to-login">Already have an account? Login</a>
+                                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('signup-form').addEventListener('submit', handleSignup);
+            document.getElementById('signup-to-login').addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo('login');
+            });
+        }
+
+        // Load Dashboard Page
+        async function loadDashboardPage() {
+            try {
+                // Get stats
+                const statsResponse = await fetch(`${API_BASE}/dashboard/stats`);
+                const statsData = await statsResponse.json();
+                app.stats = statsData.stats;
+                
+                // Get recent tickets
+                const ticketsResponse = await fetch(`${API_BASE}/tickets`);
+                const ticketsData = await ticketsResponse.json();
+                app.tickets = ticketsData.tickets;
+                
+                const pageContent = document.getElementById('page-content');
+                pageContent.innerHTML = `
+                    <h1>Dashboard</h1>
+                    <p class="text-secondary mb-5">Welcome back, ${app.user.name}!</p>
+                    
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-value">${app.stats.total}</div>
+                            <div class="stat-label">Total Tickets</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-value">${app.stats.open}</div>
+                            <div class="stat-label">Open Tickets</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-value">${app.stats.inProgress}</div>
+                            <div class="stat-label">In Progress</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-value">${app.stats.closed}</div>
+                            <div class="stat-label">Closed Tickets</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h3 class="card-title mb-0">Recent Tickets</h3>
+                            <a href="#" class="btn btn-primary btn-sm" id="view-all-tickets">View All</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Title</th>
+                                            <th>Status</th>
+                                            <th>Priority</th>
+                                            <th>Created</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${app.tickets.slice(0, 5).map(ticket => `
+                                            <tr>
+                                                <td>#${ticket.id}</td>
+                                                <td><a href="#ticket-detail?id=${ticket.id}">${ticket.title}</a></td>
+                                                <td>${getStatusBadge(ticket.status)}</td>
+                                                <td>${getPriorityBadge(ticket.priority)}</td>
+                                                <td>${ticket.relativeCreatedAt}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('view-all-tickets').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navigateTo('tickets');
+                });
+                
+                // Add click event for ticket details
+                document.querySelectorAll('tbody a').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const ticketId = e.target.getAttribute('href').split('=')[1];
+                        window.location.hash = `ticket-detail?id=${ticketId}`;
+                        navigateTo('ticket-detail');
+                    });
+                });
+                
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showToast('Error loading dashboard', 'error');
+            }
+        }
+
+        // Load Tickets Page
+        async function loadTicketsPage() {
+            try {
+                const response = await fetch(`${API_BASE}/tickets`);
+                const data = await response.json();
+                app.tickets = data.tickets;
+                
+                const pageContent = document.getElementById('page-content');
+                pageContent.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1>Tickets</h1>
+                        <a href="#" class="btn btn-primary" id="create-ticket-btn">Create Ticket</a>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <label class="me-2">Filter:</label>
+                                <select class="form-control w-auto" id="ticket-filter">
+                                    <option value="all">All Tickets</option>
+                                    <option value="open">Open</option>
+                                    <option value="in_progress">In Progress</option>
+                                    <option value="closed">Closed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Title</th>
+                                            <th>Description</th>
+                                            <th>Status</th>
+                                            <th>Priority</th>
+                                            <th>Created</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${app.tickets.map(ticket => `
+                                            <tr>
+                                                <td>#${ticket.id}</td>
+                                                <td><a href="#ticket-detail?id=${ticket.id}">${ticket.title}</a></td>
+                                                <td>${ticket.description.substring(0, 50)}${ticket.description.length > 50 ? '...' : ''}</td>
+                                                <td>${getStatusBadge(ticket.status)}</td>
+                                                <td>${getPriorityBadge(ticket.priority)}</td>
+                                                <td>${ticket.relativeCreatedAt}</td>
+                                                <td>
+                                                    <div class="d-flex gap-2">
+                                                        <a href="#edit-ticket?id=${ticket.id}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                                        <button class="btn btn-sm btn-outline-danger delete-ticket" data-id="${ticket.id}">Delete</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Event listeners
+                document.getElementById('create-ticket-btn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navigateTo('create-ticket');
+                });
+                
+                document.getElementById('ticket-filter').addEventListener('change', async (e) => {
+                    const filter = e.target.value;
+                    const response = await fetch(`${API_BASE}/tickets?filter=${filter}`);
+                    const data = await response.json();
+                    app.tickets = data.tickets;
+                    
+                    // Refresh the table
+                    const tbody = document.querySelector('tbody');
+                    tbody.innerHTML = app.tickets.map(ticket => `
+                        <tr>
+                            <td>#${ticket.id}</td>
+                            <td><a href="#ticket-detail?id=${ticket.id}">${ticket.title}</a></td>
+                            <td>${ticket.description.substring(0, 50)}${ticket.description.length > 50 ? '...' : ''}</td>
+                            <td>${getStatusBadge(ticket.status)}</td>
+                            <td>${getPriorityBadge(ticket.priority)}</td>
+                            <td>${ticket.relativeCreatedAt}</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="#edit-ticket?id=${ticket.id}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                    <button class="btn btn-sm btn-outline-danger delete-ticket" data-id="${ticket.id}">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                    
+                    // Re-attach event listeners
+                    attachTicketEventListeners();
+                });
+                
+                // Add click events for ticket details and edit
+                document.querySelectorAll('tbody a').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const href = e.target.getAttribute('href');
+                        window.location.hash = href;
+                        navigateTo(href.substring(1));
+                    });
+                });
+                
+                // Add click events for delete buttons
+                attachTicketEventListeners();
+                
+            } catch (error) {
+                console.error('Error loading tickets:', error);
+                showToast('Error loading tickets', 'error');
+            }
+        }
+
+        // Load Ticket Detail Page
+        async function loadTicketDetailPage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const ticketId = urlParams.get('id');
+            
+            if (!ticketId) {
+                showToast('Ticket ID is required', 'error');
+                navigateTo('tickets');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/tickets/${ticketId}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    showToast(data.error, 'error');
+                    navigateTo('tickets');
+                    return;
+                }
+                
+                app.currentTicket = data.ticket;
+                
+                const pageContent = document.getElementById('page-content');
+                pageContent.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1>Ticket #${app.currentTicket.id}</h1>
+                        <div>
+                            <a href="#edit-ticket?id=${app.currentTicket.id}" class="btn btn-primary me-2" id="edit-ticket-btn">Edit</a>
+                            <button class="btn btn-danger" id="delete-ticket-btn">Delete</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h3 class="card-title">${app.currentTicket.title}</h3>
+                            <div class="d-flex gap-3 mb-3">
+                                <span>${getStatusBadge(app.currentTicket.status)}</span>
+                                <span>${getPriorityBadge(app.currentTicket.priority)}</span>
+                            </div>
+                            <p>${app.currentTicket.description}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0">Ticket Information</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Status:</strong> ${getStatusBadge(app.currentTicket.status)}</p>
+                                    <p><strong>Priority:</strong> ${getPriorityBadge(app.currentTicket.priority)}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Created:</strong> ${app.currentTicket.formattedCreatedAt}</p>
+                                    <p><strong>Last Updated:</strong> ${app.currentTicket.formattedUpdatedAt}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Event listeners
+                document.getElementById('edit-ticket-btn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.location.hash = `edit-ticket?id=${app.currentTicket.id}`;
+                    navigateTo('edit-ticket');
+                });
+                
+                document.getElementById('delete-ticket-btn').addEventListener('click', () => {
+                    if (confirm('Are you sure you want to delete this ticket?')) {
+                        deleteTicket(app.currentTicket.id);
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error loading ticket detail:', error);
+                showToast('Error loading ticket details', 'error');
+            }
+        }
+
+        // Load Create Ticket Page
+        function loadCreateTicketPage() {
+            const pageContent = document.getElementById('page-content');
+            pageContent.innerHTML = `
+                <h1>Create Ticket</h1>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <form id="create-ticket-form">
+                            <div class="form-group">
+                                <label for="title" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="title" name="title" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="5"></textarea>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label for="status" class="form-label">Status</label>
+                                        <select class="form-control" id="status" name="status">
+                                            <option value="open">Open</option>
+                                            <option value="in_progress">In Progress</option>
+                                            <option value="closed">Closed</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-col">
+                                    <div class="form-group">
+                                        <label for="priority" class="form-label">Priority</label>
+                                        <select class="form-control" id="priority" name="priority">
+                                            <option value="low">Low</option>
+                                            <option value="medium" selected>Medium</option>
+                                            <option value="high">High</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-end">
+                                <a href="#tickets" class="btn btn-secondary me-2" id="cancel-btn">Cancel</a>
+                                <button type="submit" class="btn btn-primary">Create Ticket</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('create-ticket-form').addEventListener('submit', handleCreateTicket);
+            document.getElementById('cancel-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo('tickets');
+            });
+        }
+
+        // Load Edit Ticket Page
+        async function loadEditTicketPage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const ticketId = urlParams.get('id');
+            
+            if (!ticketId) {
+                showToast('Ticket ID is required', 'error');
+                navigateTo('tickets');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/tickets/${ticketId}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    showToast(data.error, 'error');
+                    navigateTo('tickets');
+                    return;
+                }
+                
+                app.currentTicket = data.ticket;
+                
+                const pageContent = document.getElementById('page-content');
+                pageContent.innerHTML = `
+                    <h1>Edit Ticket #${app.currentTicket.id}</h1>
+                    
+                    <div class="card">
+                        <div class="card-body">
+                            <form id="edit-ticket-form">
+                                <div class="form-group">
+                                    <label for="title" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="title" name="title" value="${app.currentTicket.title}" required>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="description" name="description" rows="5">${app.currentTicket.description}</textarea>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-col">
+                                        <div class="form-group">
+                                            <label for="status" class="form-label">Status</label>
+                                            <select class="form-control" id="status" name="status">
+                                                <option value="open" ${app.currentTicket.status === 'open' ? 'selected' : ''}>Open</option>
+                                                <option value="in_progress" ${app.currentTicket.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+                                                <option value="closed" ${app.currentTicket.status === 'closed' ? 'selected' : ''}>Closed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-col">
+                                        <div class="form-group">
+                                            <label for="priority" class="form-label">Priority</label>
+                                            <select class="form-control" id="priority" name="priority">
+                                                <option value="low" ${app.currentTicket.priority === 'low' ? 'selected' : ''}>Low</option>
+                                                <option value="medium" ${app.currentTicket.priority === 'medium' ? 'selected' : ''}>Medium</option>
+                                                <option value="high" ${app.currentTicket.priority === 'high' ? 'selected' : ''}>High</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-end">
+                                    <a href="#ticket-detail?id=${app.currentTicket.id}" class="btn btn-secondary me-2" id="cancel-btn">Cancel</a>
+                                    <button type="submit" class="btn btn-primary">Update Ticket</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('edit-ticket-form').addEventListener('submit', (e) => {
+                    handleUpdateTicket(e, app.currentTicket.id);
+                });
+                
+                document.getElementById('cancel-btn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.location.hash = `ticket-detail?id=${app.currentTicket.id}`;
+                    navigateTo('ticket-detail');
+                });
+                
+            } catch (error) {
+                console.error('Error loading edit ticket page:', error);
+                showToast('Error loading ticket for editing', 'error');
+            }
+        }
+
+        // Handle Login
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const email = form.email.value;
+            const password = form.password.value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showToast(data.error, 'error');
+                    return;
+                }
+                
+                app.user = data.user;
+                showNavbar();
+                hideFooter();
+                showToast('Login successful', 'success');
+                navigateTo('dashboard');
+                
+            } catch (error) {
+                console.error('Error logging in:', error);
+                showToast('Error logging in', 'error');
+            }
+        }
+
+        // Handle Signup
+        async function handleSignup(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const name = form.name.value;
+            const email = form.email.value;
+            const password = form.password.value;
+            const confirmPassword = form.confirmPassword.value;
+            
+            if (password !== confirmPassword) {
+                showToast('Passwords do not match', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, password, confirmPassword })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showToast(data.error, 'error');
+                    return;
+                }
+                
+                app.user = data.user;
+                showNavbar();
+                hideFooter();
+                showToast('Signup successful', 'success');
+                navigateTo('dashboard');
+                
+            } catch (error) {
+                console.error('Error signing up:', error);
+                showToast('Error signing up', 'error');
+            }
+        }
+
+        // Handle Create Ticket
+        async function handleCreateTicket(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const title = form.title.value;
+            const description = form.description.value;
+            const status = form.status.value;
+            const priority = form.priority.value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/tickets`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title, description, status, priority })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showToast(data.error, 'error');
+                    return;
+                }
+                
+                showToast('Ticket created successfully', 'success');
+                navigateTo('tickets');
+                
+            } catch (error) {
+                console.error('Error creating ticket:', error);
+                showToast('Error creating ticket', 'error');
+            }
+        }
+
+        // Handle Update Ticket
+        async function handleUpdateTicket(e, ticketId) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const title = form.title.value;
+            const description = form.description.value;
+            const status = form.status.value;
+            const priority = form.priority.value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/tickets/${ticketId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title, description, status, priority })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showToast(data.error, 'error');
+                    return;
+                }
+                
+                showToast('Ticket updated successfully', 'success');
+                window.location.hash = `ticket-detail?id=${ticketId}`;
+                navigateTo('ticket-detail');
+                
+            } catch (error) {
+                console.error('Error updating ticket:', error);
+                showToast('Error updating ticket', 'error');
+            }
+        }
+
+        // Delete Ticket
+        async function deleteTicket(ticketId) {
+            try {
+                const response = await fetch(`${API_BASE}/tickets/${ticketId}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showToast(data.error, 'error');
+                    return;
+                }
+                
+                showToast('Ticket deleted successfully', 'success');
+                navigateTo('tickets');
+                
+            } catch (error) {
+                console.error('Error deleting ticket:', error);
+                showToast('Error deleting ticket', 'error');
+            }
+        }
+
+        // Logout
+        async function logout() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/logout`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showToast(data.error, 'error');
+                    return;
+                }
+                
+                app.user = null;
+                hideNavbar();
+                showFooter();
+                showToast('Logged out successfully', 'success');
+                navigateTo('home');
+                
+            } catch (error) {
+                console.error('Error logging out:', error);
+                showToast('Error logging out', 'error');
+            }
+        }
+
+        // Utility Functions
+        function getStatusBadge(status) {
+            let className = 'badge ';
+            
+            switch (status) {
+                case 'open':
+                    className += 'badge-danger';
+                    break;
+                case 'in_progress':
+                    className += 'badge-warning';
+                    break;
+                case 'closed':
+                    className += 'badge-success';
+                    break;
+                default:
+                    className += 'badge-secondary';
+            }
+            
+            return `<span class="${className}">${status.replace('_', ' ')}</span>`;
+        }
+
+        function getPriorityBadge(priority) {
+            let className = 'badge ';
+            
+            switch (priority) {
+                case 'high':
+                    className += 'badge-danger';
+                    break;
+                case 'medium':
+                    className += 'badge-warning';
+                    break;
+                case 'low':
+                    className += 'badge-gray';
+                    break;
+                default:
+                    className += 'badge-secondary';
+            }
+            
+            return `<span class="${className}">${priority}</span>`;
+        }
+
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toast-container');
+            
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const toastBody = document.createElement('div');
+            toastBody.className = 'toast-body';
+            toastBody.textContent = message;
+            
+            const toastClose = document.createElement('button');
+            toastClose.className = 'toast-close';
+            toastClose.innerHTML = '&times;';
+            toastClose.onclick = function() {
+                toast.remove();
+            };
+            
+            toast.appendChild(toastBody);
+            toast.appendChild(toastClose);
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
+        function showNavbar() {
+            document.getElementById('navbar').style.display = 'block';
+        }
+
+        function hideNavbar() {
+            document.getElementById('navbar').style.display = 'none';
+        }
+
+        function showFooter() {
+            document.getElementById('footer').style.display = 'block';
+        }
+
+        function hideFooter() {
+            document.getElementById('footer').style.display = 'none';
+        }
+
+        function attachTicketEventListeners() {
+            document.querySelectorAll('.delete-ticket').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const ticketId = e.target.getAttribute('data-id');
+                    if (confirm('Are you sure you want to delete this ticket?')) {
+                        deleteTicket(ticketId);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('tbody a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const href = e.target.getAttribute('href');
+                    window.location.hash = href;
+                    navigateTo(href.substring(1));
+                });
+            });
+        }
+    </script>
+</body>
+</html>
