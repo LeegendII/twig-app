@@ -280,5 +280,22 @@ app.get('/dashboard/stats', requireAuth, (req, res) => {
 
 // Export for Vercel
 module.exports = (req, res) => {
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  
+  // Parse the URL to extract the path
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const path = url.pathname;
+  
+  // Route the request to the appropriate handler
+  req.url = path;
   app(req, res);
 };
