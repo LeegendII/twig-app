@@ -110,16 +110,30 @@ function requireAuth(req, res, next) {
 app.post('/auth/login', (req, res) => {
   const { email, password } = req.body;
   
+  // Check for admin login
   if (email === 'admin@example.com' && password === 'password123') {
     req.session.user = {
       id: 1,
       name: 'Admin User',
       email: email
     };
-    res.json({ success: true, user: req.session.user });
-  } else {
-    res.status(401).json({ error: 'Invalid email or password' });
+    return res.json({ success: true, user: req.session.user });
   }
+  
+  // Check for registered users
+  if (req.session.users) {
+    const user = req.session.users.find(u => u.email === email && u.password === password);
+    if (user) {
+      req.session.user = {
+        id: user.id,
+        name: user.name,
+        email: user.email
+      };
+      return res.json({ success: true, user: req.session.user });
+    }
+  }
+  
+  res.status(401).json({ error: 'Invalid email or password' });
 });
 
 app.post('/auth/signup', (req, res) => {
@@ -133,10 +147,31 @@ app.post('/auth/signup', (req, res) => {
     return res.status(400).json({ error: 'Passwords do not match' });
   }
   
-  req.session.user = {
+  // Initialize users array if it doesn't exist
+  if (!req.session.users) {
+    req.session.users = [];
+  }
+  
+  // Check if user already exists
+  const existingUser = req.session.users.find(user => user.email === email);
+  if (existingUser) {
+    return res.status(400).json({ error: 'User with this email already exists' });
+  }
+  
+  // Create new user
+  const newUser = {
     id: Date.now(),
     name: name,
-    email: email
+    email: email,
+    password: password // In a real app, this should be hashed
+  };
+  
+  // Add user to session
+  req.session.users.push(newUser);
+  req.session.user = {
+    id: newUser.id,
+    name: newUser.name,
+    email: newUser.email
   };
   
   res.json({ success: true, user: req.session.user });
