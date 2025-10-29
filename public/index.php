@@ -9,14 +9,30 @@ use Twig\Loader\FilesystemLoader;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+// Load environment-specific configuration
+$environment = getenv('APP_ENV') ?: 'development';
+$configFile = __DIR__ . '/../config.' . $environment . '.php';
+$config = file_exists($configFile) ? require $configFile : require __DIR__ . '/../config.development.php';
+
+// Set PHP configuration
+ini_set('display_errors', $config['display_errors']);
+error_reporting($config['error_reporting']);
+
 // Create container
 $container = new Container();
 
 // Set up Twig
 $loader = new FilesystemLoader(__DIR__ . '/../templates');
+
+// Create cache directory if it doesn't exist
+if ($config['twig']['cache'] && !is_dir($config['twig']['cache'])) {
+    mkdir($config['twig']['cache'], 0755, true);
+}
+
 $twig = new Environment($loader, [
-    'cache' => false, // Set to a path for production
-    'debug' => true,
+    'cache' => $config['twig']['cache'],
+    'debug' => $config['twig']['debug'],
+    'auto_reload' => $config['twig']['auto_reload'],
 ]);
 
 // Add Twig to container
