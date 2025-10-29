@@ -1,3 +1,11 @@
 # Redirect all requests to the public directory
 RewriteEngine On
+
+# If the request is for a valid file, directory, or symlink, serve it directly
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d [OR]
+RewriteCond %{REQUEST_FILENAME} -l
+RewriteRule ^ - [L]
+
+# Redirect all other requests to the public directory
 RewriteRule ^(.*)$ public/$1 [L]
