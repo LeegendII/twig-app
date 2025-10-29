@@ -107,7 +107,7 @@ function requireAuth(req, res, next) {
 // Routes
 
 // Auth routes
-app.post('/auth/login', (req, res) => {
+app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
   
   // Check for admin login
@@ -136,7 +136,7 @@ app.post('/auth/login', (req, res) => {
   res.status(401).json({ error: 'Invalid email or password' });
 });
 
-app.post('/auth/signup', (req, res) => {
+app.post('/api/auth/signup', (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
   
   if (!name || !email || !password || !confirmPassword) {
@@ -177,12 +177,12 @@ app.post('/auth/signup', (req, res) => {
   res.json({ success: true, user: req.session.user });
 });
 
-app.post('/auth/logout', (req, res) => {
+app.post('/api/auth/logout', (req, res) => {
   req.session.destroy();
   res.json({ success: true });
 });
 
-app.get('/auth/check', (req, res) => {
+app.get('/api/auth/check', (req, res) => {
   if (req.session.user) {
     res.json({ authenticated: true, user: req.session.user });
   } else {
@@ -191,7 +191,7 @@ app.get('/auth/check', (req, res) => {
 });
 
 // Ticket routes
-app.get('/tickets', requireAuth, (req, res) => {
+app.get('/api/tickets', requireAuth, (req, res) => {
   initializeTickets(req);
   
   const filter = req.query.filter || 'all';
@@ -212,7 +212,7 @@ app.get('/tickets', requireAuth, (req, res) => {
   res.json({ tickets });
 });
 
-app.get('/tickets/:id', requireAuth, (req, res) => {
+app.get('/api/tickets/:id', requireAuth, (req, res) => {
   initializeTickets(req);
   
   const ticketId = parseInt(req.params.id);
@@ -233,7 +233,7 @@ app.get('/tickets/:id', requireAuth, (req, res) => {
   res.json({ ticket: ticketWithDates });
 });
 
-app.post('/tickets', requireAuth, (req, res) => {
+app.post('/api/tickets', requireAuth, (req, res) => {
   initializeTickets(req);
   
   const { title, description, status = 'open', priority = 'medium' } = req.body;
@@ -256,7 +256,7 @@ app.post('/tickets', requireAuth, (req, res) => {
   res.json({ success: true, ticket: newTicket });
 });
 
-app.put('/tickets/:id', requireAuth, (req, res) => {
+app.put('/api/tickets/:id', requireAuth, (req, res) => {
   initializeTickets(req);
   
   const ticketId = parseInt(req.params.id);
@@ -284,7 +284,7 @@ app.put('/tickets/:id', requireAuth, (req, res) => {
   res.json({ success: true, ticket: req.session.tickets[ticketIndex] });
 });
 
-app.delete('/tickets/:id', requireAuth, (req, res) => {
+app.delete('/api/tickets/:id', requireAuth, (req, res) => {
   initializeTickets(req);
   
   const ticketId = parseInt(req.params.id);
@@ -299,7 +299,7 @@ app.delete('/tickets/:id', requireAuth, (req, res) => {
 });
 
 // Dashboard stats
-app.get('/dashboard/stats', requireAuth, (req, res) => {
+app.get('/api/dashboard/stats', requireAuth, (req, res) => {
   initializeTickets(req);
   
   const tickets = req.session.tickets;

@@ -768,7 +768,7 @@
         };
 
         // API Base URL
-        const API_BASE = '/api';
+        const API_BASE = 'http://localhost:3000/api';
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', () => {
@@ -826,7 +826,9 @@
         // Check authentication status
         async function checkAuthStatus() {
             try {
-                const response = await fetch(`${API_BASE}/auth/check`);
+                const response = await fetch(`${API_BASE}/auth/check`, {
+                    credentials: 'include'
+                });
                 const data = await response.json();
                 
                 if (data.authenticated) {
@@ -1074,12 +1076,16 @@
         async function loadDashboardPage() {
             try {
                 // Get stats
-                const statsResponse = await fetch(`${API_BASE}/dashboard/stats`);
+                const statsResponse = await fetch(`${API_BASE}/dashboard/stats`, {
+                    credentials: 'include'
+                });
                 const statsData = await statsResponse.json();
                 app.stats = statsData.stats;
                 
                 // Get recent tickets
-                const ticketsResponse = await fetch(`${API_BASE}/tickets`);
+                const ticketsResponse = await fetch(`${API_BASE}/tickets`, {
+                    credentials: 'include'
+                });
                 const ticketsData = await ticketsResponse.json();
                 app.tickets = ticketsData.tickets;
                 
@@ -1155,7 +1161,11 @@
                         e.preventDefault();
                         const ticketId = e.target.getAttribute('href').split('=')[1];
                         window.location.hash = `ticket-detail?id=${ticketId}`;
-                        navigateTo('ticket-detail');
+                        // Parse the URL parameters before navigating
+                        const urlParams = new URLSearchParams(window.location.hash.substring(1).split('?')[1]);
+                        if (urlParams.get('id')) {
+                            navigateTo('ticket-detail');
+                        }
                     });
                 });
                 
@@ -1168,7 +1178,9 @@
         // Load Tickets Page
         async function loadTicketsPage() {
             try {
-                const response = await fetch(`${API_BASE}/tickets`);
+                const response = await fetch(`${API_BASE}/tickets`, {
+                    credentials: 'include'
+                });
                 const data = await response.json();
                 app.tickets = data.tickets;
                 
@@ -1240,7 +1252,9 @@
                 
                 document.getElementById('ticket-filter').addEventListener('change', async (e) => {
                     const filter = e.target.value;
-                    const response = await fetch(`${API_BASE}/tickets?filter=${filter}`);
+                    const response = await fetch(`${API_BASE}/tickets?filter=${filter}`, {
+                        credentials: 'include'
+                    });
                     const data = await response.json();
                     app.tickets = data.tickets;
                     
@@ -1273,7 +1287,12 @@
                         e.preventDefault();
                         const href = e.target.getAttribute('href');
                         window.location.hash = href;
-                        navigateTo(href.substring(1));
+                        // Parse the URL parameters before navigating
+                        const page = href.substring(1).split('?')[0];
+                        const urlParams = new URLSearchParams(window.location.hash.substring(1).split('?')[1]);
+                        if (urlParams.get('id')) {
+                            navigateTo(page);
+                        }
                     });
                 });
                 
@@ -1298,7 +1317,9 @@
             }
             
             try {
-                const response = await fetch(`${API_BASE}/tickets/${ticketId}`);
+                const response = await fetch(`${API_BASE}/tickets/${ticketId}`, {
+                    credentials: 'include'
+                });
                 const data = await response.json();
                 
                 if (data.error) {
@@ -1441,7 +1462,9 @@
             }
             
             try {
-                const response = await fetch(`${API_BASE}/tickets/${ticketId}`);
+                const response = await fetch(`${API_BASE}/tickets/${ticketId}`, {
+                    credentials: 'include'
+                });
                 const data = await response.json();
                 
                 if (data.error) {
@@ -1534,6 +1557,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    credentials: 'include',
                     body: JSON.stringify({ email, password })
                 });
                 
@@ -1577,6 +1601,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    credentials: 'include',
                     body: JSON.stringify({ name, email, password, confirmPassword })
                 });
                 
@@ -1615,6 +1640,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    credentials: 'include',
                     body: JSON.stringify({ title, description, status, priority })
                 });
                 
@@ -1650,6 +1676,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    credentials: 'include',
                     body: JSON.stringify({ title, description, status, priority })
                 });
                 
@@ -1674,7 +1701,8 @@
         async function deleteTicket(ticketId) {
             try {
                 const response = await fetch(`${API_BASE}/tickets/${ticketId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    credentials: 'include'
                 });
                 
                 const data = await response.json();
@@ -1697,7 +1725,8 @@
         async function logout() {
             try {
                 const response = await fetch(`${API_BASE}/auth/logout`, {
-                    method: 'POST'
+                    method: 'POST',
+                    credentials: 'include'
                 });
                 
                 const data = await response.json();
@@ -1819,7 +1848,12 @@
                     e.preventDefault();
                     const href = e.target.getAttribute('href');
                     window.location.hash = href;
-                    navigateTo(href.substring(1));
+                    // Parse the URL parameters before navigating
+                    const page = href.substring(1).split('?')[0];
+                    const urlParams = new URLSearchParams(window.location.hash.substring(1).split('?')[1]);
+                    if (urlParams.get('id')) {
+                        navigateTo(page);
+                    }
                 });
             });
         }

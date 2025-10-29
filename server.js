@@ -4,20 +4,26 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:8080',
+  credentials: true
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Session configuration for Vercel
+// Session configuration
 app.use(session({
   secret: 'ticket-management-secret-key',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    secure: false, // Set to false for development
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    httpOnly: false,
+    sameSite: 'lax'
   }
 }));
 
@@ -313,24 +319,8 @@ app.get('/api/dashboard/stats', requireAuth, (req, res) => {
   res.json({ stats });
 });
 
-// Export for Vercel
-module.exports = (req, res) => {
-  // Enable CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-  
-  // Parse the URL to extract the path
-  const url = new URL(req.url, `http://${req.headers.host}`);
-  const path = url.pathname;
-  
-  // Route the request to the appropriate handler
-  req.url = path;
-  app(req, res);
-};
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`API: http://localhost:${PORT}/api`);
+});
