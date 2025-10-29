@@ -147,9 +147,46 @@ A robust ticket management web application built with Twig, PHP, and Slim framew
 
 3. **Deploy** using your platform's deployment process
 
-#### 4. GitHub Pages (Static Only)
+#### 4. GitHub Pages (Static Redirect)
 
-Note: GitHub Pages doesn't support PHP applications natively. For a full deployment, consider using GitHub Actions to deploy to a hosting service that supports PHP.
+Since GitHub Pages doesn't support PHP applications natively, we've created a static redirect page:
+
+1. Enable GitHub Pages in your repository settings
+2. Select main branch as the source
+3. Set root directory as the publishing source
+4. Visitors will see a redirect page that guides them to access the application properly
+
+#### 5. Live URL Solutions
+
+For the application to work properly with all features, you need to deploy it to a PHP-enabled hosting service:
+
+**Option 1: Free PHP Hosting Services**
+- **000webhost**: Free PHP hosting with cPanel
+- **InfinityFree**: Free PHP hosting with subdomain
+- **Heroku**: With PHP buildpack (requires credit card for verification)
+
+**Option 2: Paid Hosting**
+- **Shared Hosting**: cPanel-based hosting (Bluehost, HostGator, SiteGround)
+- **VPS/Dedicated**: Full control over server configuration
+- **Cloud Hosting**: AWS, Google Cloud, Azure with PHP support
+
+**Option 3: GitHub Actions + FTP**
+We've included a GitHub Actions workflow (`.github/workflows/deploy.yml`) that can automatically deploy your code to any FTP-enabled hosting service:
+
+1. Go to your GitHub repository settings
+2. Click on "Secrets and variables" > "Actions"
+3. Add the following secrets:
+   - `FTP_SERVER`: Your FTP server address
+   - `FTP_USERNAME`: Your FTP username
+   - `FTP_PASSWORD`: Your FTP password
+   - `FTP_TARGET_DIR`: Target directory on server (usually public_html or www folder)
+4. Push changes to the master branch to trigger automatic deployment
+
+**Important Notes for Live URL**
+- The application requires the `public` directory to be set as the document root
+- If you can't set the document root, the `.htaccess` file will redirect requests to the public directory
+- Make sure your hosting service supports PHP 7.4 or higher
+- Set the `APP_ENV` environment variable to `production` for live deployments
 
 ### Environment Configuration
 
