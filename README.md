@@ -33,8 +33,8 @@ A robust ticket management web application built with Twig, PHP, and Slim framew
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd ticket-management-app
+   git clone https://github.com/LeegendII/twig-app.git
+   cd twig-app
    ```
 
 2. **Install dependencies**
@@ -50,6 +50,141 @@ A robust ticket management web application built with Twig, PHP, and Slim framew
 
 4. **Access the application**
    Open your browser and navigate to `http://localhost:8000`
+
+## Deployment
+
+### Deployment Options
+
+#### 1. Shared Hosting / cPanel
+
+1. **Upload files** to your hosting account using FTP or File Manager
+2. **Set document root** to the `public` directory
+3. **Install dependencies** via SSH or cPanel's Terminal:
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   ```
+4. **Set permissions**:
+   ```bash
+   chmod -R 755 var/
+   chmod -R 755 public/
+   ```
+5. **Set environment variable** (if possible):
+   ```bash
+   export APP_ENV=production
+   ```
+
+#### 2. VPS / Dedicated Server
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/LeegendII/twig-app.git
+   cd twig-app
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   ```
+
+3. **Configure web server**:
+   
+   **Apache**:
+   ```apache
+   <VirtualHost *:80>
+       ServerName your-domain.com
+       DocumentRoot /path/to/twig-app/public
+       
+       <Directory /path/to/twig-app/public>
+           AllowOverride All
+           Require all granted
+       </Directory>
+   </VirtualHost>
+   ```
+   
+   **Nginx**:
+   ```nginx
+   server {
+       listen 80;
+       server_name your-domain.com;
+       root /path/to/twig-app/public;
+       index index.php;
+       
+       location / {
+           try_files $uri $uri/ /index.php?$query_string;
+       }
+       
+       location ~ \.php$ {
+           fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+           fastcgi_index index.php;
+           fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+           include fastcgi_params;
+       }
+   }
+   ```
+
+4. **Set environment variable**:
+   ```bash
+   export APP_ENV=production
+   ```
+
+5. **Run deployment script**:
+   ```bash
+   chmod +x deploy.sh
+   ./deploy.sh
+   ```
+
+#### 3. Platform as a Service (Heroku, Render, etc.)
+
+1. **Create `Procfile`** in the root directory:
+   ```
+   web: vendor/bin/heroku-php-apache2 public/
+   ```
+
+2. **Set environment variables** in your platform's dashboard:
+   ```
+   APP_ENV=production
+   ```
+
+3. **Deploy** using your platform's deployment process
+
+#### 4. GitHub Pages (Static Only)
+
+Note: GitHub Pages doesn't support PHP applications natively. For a full deployment, consider using GitHub Actions to deploy to a hosting service that supports PHP.
+
+### Environment Configuration
+
+The application uses environment-specific configuration files:
+
+- `config.development.php` - Development settings
+- `config.production.php` - Production settings
+
+You can switch between environments by setting the `APP_ENV` environment variable:
+
+```bash
+export APP_ENV=production  # For production
+export APP_ENV=development  # For development (default)
+```
+
+### Security Considerations for Production
+
+1. **Set proper file permissions**:
+   ```bash
+   chmod -R 755 var/
+   chmod 644 config.*.php
+   ```
+
+2. **Disable PHP error display** (automatically handled in production mode)
+
+3. **Use HTTPS** in production
+
+4. **Implement CSRF protection** (partially implemented)
+
+5. **Use environment variables** for sensitive data
+
+6. **Regularly update dependencies**:
+   ```bash
+   composer update
+   ```
 
 ## Project Structure
 
