@@ -1,0 +1,20 @@
+{
+    "name": "ticket-management/app",
+    "description": "A ticket management web application built with Twig",
+    "type": "project",
+    "require": {
+        "twig/twig": "^3.0",
+        "slim/slim": "^4.0",
+        "slim/psr7": "^1.0",
+        "monolog/monolog": "^2.0",
+        "php-di/php-di": "^7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "scripts": {
+        "start": "php -S localhost:8000 -t public/"
+    }
+}

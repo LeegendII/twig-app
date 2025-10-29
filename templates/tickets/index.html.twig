@@ -1,0 +1,163 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Tickets - Ticket Management System{% endblock %}
+
+{% block header %}
+<header class="header">
+    <div class="logo">TicketHub</div>
+    <nav class="nav">
+        <a href="/dashboard" class="nav-link">Dashboard</a>
+        <a href="/tickets" class="nav-link active">Tickets</a>
+        <form action="/logout" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-secondary btn-sm">Logout</button>
+        </form>
+    </nav>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Ticket Management</h1>
+        <a href="/tickets/create" class="btn btn-primary">Create New Ticket</a>
+    </div>
+    
+    {% if success %}
+        <div class="alert alert-success">
+            {{ success }}
+        </div>
+    {% endif %}
+    
+    {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+    {% endif %}
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">Filter Tickets</h3>
+        </div>
+        <div class="card-body">
+            <form method="get" class="filter-form">
+                <div class="grid grid-cols-4">
+                    <div class="form-group">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-control" id="status" name="status">
+                            <option value="">All Statuses</option>
+                            <option value="open">Open</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="priority" class="form-label">Priority</label>
+                        <select class="form-control" id="priority" name="priority">
+                            <option value="">All Priorities</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="search" class="form-label">Search</label>
+                        <input type="text" class="form-control" id="search" name="search" placeholder="Search tickets...">
+                    </div>
+                    
+                    <div class="form-group d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="tickets-container">
+        {% if tickets|length > 0 %}
+            {% for ticket in tickets %}
+                <div class="ticket-card">
+                    <div class="ticket-header">
+                        <div class="ticket-title">#{{ ticket.id }} - {{ ticket.title }}</div>
+                        <span class="status-badge status-{{ ticket.status }}">
+                            {% if ticket.status == 'in_progress' %}In Progress{% else %}{{ ticket.status|capitalize }}{% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="ticket-description">
+                        {{ ticket.description }}
+                    </div>
+                    
+                    <div class="ticket-meta d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge bg-{{ ticket.priority == 'high' ? 'danger' : (ticket.priority == 'medium' ? 'warning' : 'info') }}">
+                                {{ ticket.priority|capitalize }} Priority
+                            </span>
+                        </div>
+                        <div class="ticket-actions">
+                            <a href="/tickets/{{ ticket.id }}/edit" class="btn btn-sm btn-outline">Edit</a>
+                            <form action="/tickets/{{ ticket.id }}/delete" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-danger btn-delete">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="card-title">No tickets found</h3>
+                    <p class="card-text">Create your first ticket to get started.</p>
+                    <a href="/tickets/create" class="btn btn-primary">Create Ticket</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+<footer class="footer">
+    <div class="footer-content">
+        <p>&copy; 2023 TicketHub. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="#privacy" class="nav-link">Privacy Policy</a>
+            <a href="#terms" class="nav-link">Terms of Service</a>
+            <a href="#contact" class="nav-link">Contact Us</a>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Store session in localStorage for client-side checks
+        storeSession({
+            user_id: {{ user.user_id }},
+            email: '{{ user.email }}',
+            name: '{{ user.name }}'
+        });
+        
+        // Check for any server-side messages and display as toast
+        {% if success %}
+            showToast("{{ success }}", "success");
+        {% endif %}
+        
+        {% if error %}
+            showToast("{{ error }}", "error");
+        {% endif %}
+        
+        // Add confirmation for delete actions
+        const deleteButtons = document.querySelectorAll('.btn-delete');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (!confirm('Are you sure you want to delete this ticket? This action cannot be undone.')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

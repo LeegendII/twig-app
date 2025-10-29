@@ -1,0 +1,90 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Ticket Management System - Home{% endblock %}
+
+{% block header %}
+<header class="header">
+    <div class="logo">TicketHub</div>
+    <nav class="nav">
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="/auth/login" class="nav-link">Login</a>
+        <a href="/auth/signup" class="btn btn-primary">Get Started</a>
+    </nav>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-circle hero-circle-1"></div>
+    <div class="hero-circle hero-circle-2"></div>
+    
+    <div class="hero-content">
+        <h1>Streamline Your Support Process</h1>
+        <p>Efficiently manage, track, and resolve customer support tickets with our intuitive ticket management system. Improve response times and customer satisfaction.</p>
+        <div class="hero-buttons">
+            <a href="/auth/login" class="btn btn-primary">Login</a>
+            <a href="/auth/signup" class="btn btn-outline">Get Started</a>
+        </div>
+    </div>
+    
+    <div class="hero-wave">
+        <svg viewBox="0 0 1440 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,50 C360,100 1080,0 1440,50 L1440,100 L0,100 Z" fill="#f8f9fa"></path>
+        </svg>
+    </div>
+</section>
+
+<section id="features" class="main-content">
+    <h2 class="text-center mb-5">Powerful Features</h2>
+    
+    <div class="stats-grid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Easy Ticket Creation</h3>
+            </div>
+            <p>Create and submit tickets with just a few clicks. Include all necessary details to ensure quick resolution.</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Real-time Tracking</h3>
+            </div>
+            <p>Monitor ticket status updates in real-time. Stay informed about progress and resolution timelines.</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Priority Management</h3>
+            </div>
+            <p>Organize tickets by priority levels to ensure critical issues get addressed first.</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Team Collaboration</h3>
+            </div>
+            <p>Assign tickets to team members and collaborate on complex issues for faster resolution.</p>
+        </div>
+    </div>
+    
+    <div class="text-center mt-5">
+        <h2 class="mb-4">Ready to Get Started?</h2>
+        <p class="mb-4">Join thousands of teams already using TicketHub to streamline their support process.</p>
+        <a href="/auth/signup" class="btn btn-primary btn-lg">Sign Up Now</a>
+    </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+<footer class="footer">
+    <div class="footer-content">
+        <p>&copy; 2023 TicketHub. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="#privacy" class="nav-link">Privacy Policy</a>
+            <a href="#terms" class="nav-link">Terms of Service</a>
+            <a href="#contact" class="nav-link">Contact Us</a>
+        </div>
+    </div>
+</footer>
+{% endblock %}

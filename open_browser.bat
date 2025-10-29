@@ -1,0 +1,3 @@
+@echo off
+start http://localhost:8000
+echo Opening http://localhost:8000 in your default browser...

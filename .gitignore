@@ -1,0 +1,35 @@
+# Dependencies
+/vendor/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Cache directories
+/templates/cache/
+/var/cache/
+
+# Temporary files
+/tmp/
+/temp/
+
+# Composer
+composer.phar
+
+# PHP
+.phpunit.result.cache

@@ -1,0 +1,119 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Login - Ticket Management System{% endblock %}
+
+{% block content %}
+<section class="main-content">
+    <div class="card" style="max-width: 500px; margin: 2rem auto;">
+        <div class="card-header text-center">
+            <h2 class="card-title">Login to Your Account</h2>
+        </div>
+        
+        {% if error and error.form %}
+            <div class="alert alert-danger">
+                {{ error.form }}
+            </div>
+        {% endif %}
+        
+        <form action="/auth/login" method="post" class="login-form">
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control {% if error and error.email %}is-invalid{% endif %}" id="email" name="email" value="{{ formData.email|default('') }}" required>
+                {% if error and error.email %}
+                    <div class="invalid-feedback">{{ error.email }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control {% if error and error.password %}is-invalid{% endif %}" id="password" name="password" required>
+                {% if error and error.password %}
+                    <div class="invalid-feedback">{{ error.password }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group d-flex justify-content-between align-items-center">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                    <label class="form-check-label" for="remember">Remember me</label>
+                </div>
+                <a href="#" class="text-decoration-none">Forgot password?</a>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </div>
+            
+            <div class="text-center mt-3">
+                <p>Don't have an account? <a href="/auth/signup">Sign up</a></p>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section class="main-content">
+    <div class="card" style="max-width: 500px; margin: 0 auto;">
+        <div class="card-header">
+            <h3 class="card-title">Demo Credentials</h3>
+        </div>
+        <div class="card-body">
+            <p>For testing purposes, you can use the following credentials:</p>
+            <p><strong>Email:</strong> user@example.com</p>
+            <p><strong>Password:</strong> password</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+<footer class="footer">
+    <div class="footer-content">
+        <p>&copy; 2023 TicketHub. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="#privacy" class="nav-link">Privacy Policy</a>
+            <a href="#terms" class="nav-link">Terms of Service</a>
+            <a href="#contact" class="nav-link">Contact Us</a>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check for any server-side error messages and display as toast
+        {% if error and error.form %}
+            showToast("{{ error.form }}", "error");
+        {% endif %}
+        
+        // Form validation
+        const loginForm = document.querySelector('.login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                const email = document.getElementById('email');
+                const password = document.getElementById('password');
+                
+                let isValid = true;
+                
+                if (!email.value.trim()) {
+                    showFieldError(email, 'Email is required');
+                    isValid = false;
+                } else {
+                    clearFieldError(email);
+                }
+                
+                if (!password.value.trim()) {
+                    showFieldError(password, 'Password is required');
+                    isValid = false;
+                } else {
+                    clearFieldError(password);
+                }
+                
+                if (!isValid) {
+                    e.preventDefault();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Edit Ticket #{{ ticket.id }} - Ticket Management System{% endblock %}
+
+{% block header %}
+<header class="header">
+    <div class="logo">TicketHub</div>
+    <nav class="nav">
+        <a href="/dashboard" class="nav-link">Dashboard</a>
+        <a href="/tickets" class="nav-link">Tickets</a>
+        <form action="/logout" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-secondary btn-sm">Logout</button>
+        </form>
+    </nav>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="main-content">
+    <div class="card" style="max-width: 800px; margin: 0 auto;">
+        <div class="card-header">
+            <h2 class="card-title">Edit Ticket #{{ ticket.id }}</h2>
+        </div>
+        
+        {% if error and error.form %}
+            <div class="alert alert-danger">
+                {{ error.form }}
+            </div>
+        {% endif %}
+        
+        <form action="/tickets/{{ ticket.id }}" method="post" class="ticket-form">
+            <div class="form-group">
+                <label for="title" class="form-label">Title *</label>
+                <input type="text" class="form-control {% if error and error.title %}is-invalid{% endif %}" id="title" name="title" value="{{ formData.title|default(ticket.title) }}" required>
+                {% if error and error.title %}
+                    <div class="invalid-feedback">{{ error.title }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control {% if error and error.description %}is-invalid{% endif %}" id="description" name="description" rows="5">{{ formData.description|default(ticket.description) }}</textarea>
+                {% if error and error.description %}
+                    <div class="invalid-feedback">{{ error.description }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="grid grid-cols-2">
+                <div class="form-group">
+                    <label for="status" class="form-label">Status *</label>
+                    <select class="form-control {% if error and error.status %}is-invalid{% endif %}" id="status" name="status" required>
+                        <option value="">Select Status</option>
+                        <option value="open" {{ formData.status == 'open' or (not formData.status and ticket.status == 'open') ? 'selected' : '' }}>Open</option>
+                        <option value="in_progress" {{ formData.status == 'in_progress' or (not formData.status and ticket.status == 'in_progress') ? 'selected' : '' }}>In Progress</option>
+                        <option value="closed" {{ formData.status == 'closed' or (not formData.status and ticket.status == 'closed') ? 'selected' : '' }}>Closed</option>
+                    </select>
+                    {% if error and error.status %}
+                        <div class="invalid-feedback">{{ error.status }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="priority" class="form-label">Priority</label>
+                    <select class="form-control" id="priority" name="priority">
+                        <option value="low" {{ formData.priority == 'low' or (not formData.priority and ticket.priority == 'low') ? 'selected' : '' }}>Low</option>
+                        <option value="medium" {{ formData.priority == 'medium' or (not formData.priority and ticket.priority == 'medium') ? 'selected' : '' }}>Medium</option>
+                        <option value="high" {{ formData.priority == 'high' or (not formData.priority and ticket.priority == 'high') ? 'selected' : '' }}>High</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="assigned_to" class="form-label">Assigned To</label>
+                <input type="text" class="form-control" id="assigned_to" name="assigned_to" value="{{ formData.assigned_to|default(ticket.assigned_to) }}" placeholder="Enter name or email">
+            </div>
+            
+            <div class="form-group">
+                <label for="due_date" class="form-label">Due Date</label>
+                <input type="date" class="form-control" id="due_date" name="due_date" value="{{ formData.due_date|default(ticket.due_date) }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="tags" class="form-label">Tags</label>
+                <input type="text" class="form-control" id="tags" name="tags" value="{{ formData.tags|default(ticket.tags) }}" placeholder="Enter tags separated by commas">
+                <small class="form-text text-muted">Separate multiple tags with commas (e.g., bug, urgent, frontend)</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="resolution" class="form-label">Resolution Notes</label>
+                <textarea class="form-control" id="resolution" name="resolution" rows="3">{{ formData.resolution|default(ticket.resolution) }}" placeholder="Add resolution details if closing the ticket"></textarea>
+            </div>
+            
+            <div class="form-group d-flex justify-content-between">
+                <a href="/tickets" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Update Ticket</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+<footer class="footer">
+    <div class="footer-content">
+        <p>&copy; 2023 TicketHub. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="#privacy" class="nav-link">Privacy Policy</a>
+            <a href="#terms" class="nav-link">Terms of Service</a>
+            <a href="#contact" class="nav-link">Contact Us</a>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Store session in localStorage for client-side checks
+        storeSession({
+            user_id: {{ user.user_id }},
+            email: '{{ user.email }}',
+            name: '{{ user.name }}'
+        });
+        
+        // Check for any server-side error messages and display as toast
+        {% if error and error.form %}
+            showToast("{{ error.form }}", "error");
+        {% endif %}
+        
+        // Form validation
+        const ticketForm = document.querySelector('.ticket-form');
+        if (ticketForm) {
+            ticketForm.addEventListener('submit', function(e) {
+                const title = document.getElementById('title');
+                const status = document.getElementById('status');
+                
+                let isValid = true;
+                
+                if (!title.value.trim()) {
+                    showFieldError(title, 'Title is required');
+                    isValid = false;
+                } else {
+                    clearFieldError(title);
+                }
+                
+                if (!status.value) {
+                    showFieldError(status, 'Status is required');
+                    isValid = false;
+                } else if (!['open', 'in_progress', 'closed'].includes(status.value)) {
+                    showFieldError(status, 'Status must be one of: open, in_progress, closed');
+                    isValid = false;
+                } else {
+                    clearFieldError(status);
+                }
+                
+                if (!isValid) {
+                    e.preventDefault();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
